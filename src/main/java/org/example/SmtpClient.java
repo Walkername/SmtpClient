@@ -10,6 +10,13 @@ public class SmtpClient {
         startSmtpClient();
     }
 
+    private static String sendMsg(PrintWriter out, BufferedReader in, String message) throws Exception {
+        out.printf(message);
+        String response = in.readLine();
+        System.out.println(response + "\n");
+        return response;
+    }
+
     private static void startSmtpClient() throws Exception {
         String sender = "<username@gmail.com>";
         String recipient = "<user123@mail.ru>";
@@ -24,58 +31,45 @@ public class SmtpClient {
         }
         System.out.println(response + "\n");
 
-        String heloCommand = "HELO student\r\n";
-        out.printf(heloCommand);
-        response = in.readLine();
+        response = sendMsg(out, in, "HELO student\r\n");
         if (!response.startsWith("250")) {
             System.out.println("250 reply not received from server");
         }
-        System.out.println(response + "\n");
 
-        String mailFromCommand = "MAIL FROM: " + sender + "\r\n";
-        out.printf(mailFromCommand);
-        response = in.readLine();
+        response = sendMsg(out, in, "MAIL FROM: " + sender + "\r\n");
         if (!response.startsWith("250")) {
             System.out.println("250 reply not received from server");
         }
-        System.out.println(response + "\n");
 
-        String rcptToCommand = "RCPT TO: " + recipient + "\r\n";
-        out.printf(rcptToCommand);
-        response = in.readLine();
+        response = sendMsg(out, in, "RCPT TO: " + recipient + "\r\n");
         if (!response.startsWith("250")) {
             System.out.println("250 reply not received from server");
         }
-        System.out.println(response + "\n");
 
-        out.printf("DATA\r\n");
-        out.printf("From: " + sender + "\r\n");
-        out.printf("To: " + recipient + "\r\n");
-        out.printf("Subject: batman docs \r\n");
-        response = in.readLine();
+        response = sendMsg(
+                out,
+                in,
+                "DATA\r\n"
+                + "From: " + sender + "\r\n"
+                + "To: " + recipient + "\r\n"
+                + "Subject: batman docs \r\n"
+        );
         if (!response.startsWith("354")) {
             System.out.println("354 reply not received from server");
         }
-        System.out.println(response + "\n");
 
         String dataMessage = "\r\n Superman, go back to Krypton!";
         out.printf(dataMessage);
 
-        String endMessage = "\r\n.\r\n";
-        out.printf(endMessage);
-        response = in.readLine();
+        response = sendMsg(out, in, "\r\n.\r\n");
         if (!response.startsWith("250")) {
             System.out.println("250 reply not received from server");
         }
-        System.out.println(response + "\n");
 
-        String quitCommand = "QUIT\r\n";
-        out.printf(quitCommand);
-        response = in.readLine();
+        response = sendMsg(out, in, "QUIT\r\n");
         if (!response.startsWith("221")) {
             System.out.println("221 reply not received from server");
         }
-        System.out.println(response + "\n");
 
         in.close();
         out.close();
